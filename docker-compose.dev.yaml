@@ -10,6 +10,8 @@ services:
     entrypoint: ["poetry", "run", "fastapi", "dev", "src/main.py", "--host", "0.0.0.0"]
     environment:
       DB_CONN_STR: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
+      WEBHOOK_ID: ${WEBHOOK_ID}
+      WEBHOOK_TOKEN: ${WEBHOOK_TOKEN}
     ports:
       - "8000:8000"
     volumes:
