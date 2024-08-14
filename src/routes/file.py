@@ -26,6 +26,19 @@ def download_file(file_id: str, discord: Annotated[DiscordService, Depends(get_d
 
     return RedirectResponse(download_url)
 
+@router.get("/file_url/{file_id}")
+def download_url(file_id: str, discord: Annotated[DiscordService, Depends(get_discord)], db: Annotated[Session, Depends(get_db)]):
+    file = db.query(models.File).filter(models.File.id == file_id).first()
+
+    if file == None:
+        raise HTTPException(status_code=404, detail="File not found.")
+
+    download_url =  discord.download_url(file.discord_id)
+
+    return {
+        "url": download_url
+    }
+
 @router.delete("/file/{file_id}")
 def delete_file(file_id: str, discord: Annotated[DiscordService, Depends(get_discord)], db: Annotated[Session, Depends(get_db)]):
     file = db.query(models.File).filter(models.File.id == file_id).first()
