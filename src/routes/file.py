@@ -13,7 +13,11 @@ router = APIRouter()
 
 @router.get("/file")
 def get_uploaded_files(db: Annotated[Session, Depends(get_db)]):
-    return db.query(models.File).all()
+    return db.query(models.File).filter(models.File.deleted_at == None).all()
+
+@router.get("/file/recycle-bin")
+def get_uploaded_files(db: Annotated[Session, Depends(get_db)]):
+    return db.query(models.File).filter(models.File.deleted_at != None).all()
 
 @router.get("/file/{file_id}")
 def download_file(file_id: str, discord: Annotated[DiscordService, Depends(get_discord)], db: Annotated[Session, Depends(get_db)]):
