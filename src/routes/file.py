@@ -88,3 +88,17 @@ def modify_file(file_id: str, payload: schemas.File, db: Annotated[Session, Depe
     file.category = payload.category
 
     db.commit()
+
+@router.patch("/file/{file_id}/recover")
+def recover_file(file_id: str, db: Annotated[Session, Depends(get_db)]):
+    file = db.query(models.File).filter(models.File.id == file_id).first()
+
+    if file == None:
+        raise HTTPException(status_code=404, detail="File not found.")
+    
+    if file.deleted_at == None:
+        raise HTTPException(status_code=400, detail="File is not deleted.")
+
+    file.deleted_at = None
+
+    db.commit()
